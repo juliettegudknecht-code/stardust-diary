@@ -624,7 +624,7 @@ async function loadTelescope(force){
   if(which==='Roman'){ q='Nancy Grace Roman Space Telescope'; sub='Roman is NASA\'s wide-field infrared survey telescope. Each of its images covers a patch of sky a hundred times bigger than a Hubble frame.'; }
   else if(target){ q=`${which} ${target.target}`; sub=`${target.name} is high overhead tonight. This is how ${which} sees ${target.target.replace(/ galaxy$| nebula$/i, m=>m)}.`; }
   else { q=`${which} nebula`; sub=`A favourite from ${which}.`; }
-  const key='img.'+ns.toLocaleDateString('en-CA')+'.'+which+'.'+(target?target.name:'');
+  const key='img2.'+ns.toLocaleDateString('en-CA')+'.'+which+'.'+(target?target.name:'');
   const cached=load(key,null);
   if(cached && !force){ render(cached.img, cached.title, sub); return; }
   render(null, `Finding a ${label} view of what's above you`, 'Needs a connection.');
