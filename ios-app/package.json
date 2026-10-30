@@ -1,0 +1,15 @@
+{
+  "name": "stardust-diary-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capacitor iOS wrapper for the Stardust Diary app (the index.html one folder up)",
+  "scripts": {
+    "sync": "sh sync-web.sh && cap sync ios",
+    "open": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  }
+}

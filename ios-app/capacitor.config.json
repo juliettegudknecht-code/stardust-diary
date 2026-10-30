@@ -1,0 +1,8 @@
+{
+  "appId": "com.juliettegudknecht.stardustdiary",
+  "appName": "Stardust Diary",
+  "webDir": "www",
+  "backgroundColor": "#2a1636",
+  "ios": { "contentInset": "automatic", "backgroundColor": "#2a1636", "allowsLinkPreview": false },
+  "plugins": { "SplashScreen": { "launchAutoHide": true, "launchShowDuration": 0, "backgroundColor": "#2a1636" } }
+}

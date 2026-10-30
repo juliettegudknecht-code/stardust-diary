@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stardust Diary">
+<meta name="theme-color" content="#2a1636">
+<title>Stardust Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #fff6f9;
+    --bg2: #f6ecff;
+    --ink: #3b2344;
+    --muted: #8c6f8f;
+    --rose: #e4548c;
+    --rosedeep: #b83a6b;
+    --blush: #ffe1ec;
+    --lav: #cdb7f5;
+    --lavdeep: #8e6fd6;
+    --line: rgba(59,35,68,0.12);
+    --panel: rgba(255,255,255,0.65);
+    --bar: rgba(255,246,249,0.94);
+    --night1: #2a1636;
+    --night2: #4a2456;
+    --star: #ffd3e4;
+    --ok: #5aa37a;
+    --chart-grid: rgba(59,35,68,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg1: #241328;
+      --bg2: #1a1020;
+      --ink: #f6e4ee;
+      --muted: #b595b8;
+      --rose: #ff86b6;
+      --rosedeep: #ffa7c9;
+      --blush: #3d2140;
+      --lav: #5a4484;
+      --lavdeep: #c9b3ff;
+      --line: rgba(246,228,238,0.14);
+      --panel: rgba(255,255,255,0.05);
+      --bar: rgba(30,18,36,0.94);
+      --star: #ffd3e4;
+      --chart-grid: rgba(246,228,238,0.1);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: linear-gradient(165deg, var(--bg1), var(--bg2)) fixed;
+    color: var(--ink);
+    font-family: "Karla", -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
+  h1 { font-size: 38px; line-height: 1.05; }
+  h2 { font-size: 28px; margin: 28px 0 8px; }
+  h3 { font-size: 21px; margin: 18px 0 4px; }
+  p { margin: 6px 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 14px; }
+  a { color: var(--rosedeep); }
+
+  .screen { display: none; min-height: 100%; padding: calc(20px + env(safe-area-inset-top)) 20px calc(100px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  .topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .topline .muted { margin-top: 2px; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .iconbtn { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--line); flex: none; }
+  .iconbtn svg { width: 20px; height: 20px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 8px; background: var(--rose); color: #fff; font-weight: 700; }
+  .btn.soft { background: var(--blush); color: var(--ink); }
+  .btn.wide { width: 100%; }
+  .btn:active { transform: translateY(1px); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row.between { justify-content: space-between; }
+  .row.wrap { flex-wrap: wrap; }
+
+  /* night hero */
+  .sky {
+    position: relative; overflow: hidden; border-radius: 10px; padding: 22px 20px 18px;
+    background: var(--night1);
+    color: #fbeaf2; margin-top: 8px;
+  }
+  .sky::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .9;
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 18%, var(--star) 50%, transparent 60%),
+      radial-gradient(1px 1px at 30% 70%, #fff 50%, transparent 60%),
+      radial-gradient(1.5px 1.5px at 55% 25%, var(--star) 50%, transparent 60%),
+      radial-gradient(1px 1px at 70% 60%, #fff 50%, transparent 60%),
+      radial-gradient(2px 2px at 85% 20%, var(--star) 50%, transparent 60%),
+      radial-gradient(1px 1px at 92% 80%, #fff 50%, transparent 60%),
+      radial-gradient(1px 1px at 45% 88%, var(--star) 50%, transparent 60%),
+      radial-gradient(1.5px 1.5px at 8% 85%, #fff 50%, transparent 60%),
+      radial-gradient(1px 1px at 62% 8%, #fff 50%, transparent 60%),
+      radial-gradient(1px 1px at 22% 45%, #fff 50%, transparent 60%),
+      radial-gradient(1.5px 1.5px at 78% 42%, var(--star) 50%, transparent 60%);
+  }
+  .sky .moonwrap { display: flex; align-items: center; gap: 18px; position: relative; }
+  .sky .moonwrap svg { width: 84px; height: 84px; flex: none; }
+  .sky h2 { margin: 0 0 2px; color: #fff; font-size: 30px; font-style: italic; font-weight: 600; }
+  .sky .muted { color: #e2c6d8; }
+  .sky .times { position: relative; display: flex; gap: 18px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.14); flex-wrap: wrap; }
+  .sky .times div { font-size: 14px; }
+  .sky .times strong { display: block; font-size: 17px; font-weight: 700; color: #fff; }
+
+  .list { border-top: 1px solid var(--line); }
+  .item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .item .ico { display: none; width: 36px; height: 36px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--blush); }
+  .item .ico svg { width: 20px; height: 20px; }
+  .item strong { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 600; line-height: 1.2; }
+  .item .small { margin-top: 2px; }
+  .item .right { margin-left: auto; text-align: right; flex: none; }
+
+  .imagebox { margin-top: 10px; border-radius: 10px; overflow: hidden; background: var(--night1); min-height: 120px; position: relative; }
+  .imagebox img { width: 100%; display: block; max-height: 320px; object-fit: cover; }
+  .imagebox .cap { padding: 10px 14px 12px; color: #fbeaf2; font-size: 14px; background: var(--night1); }
+  .imagebox .cap strong { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 20px; color: #fff; }
+
+  .note { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+
+  /* streak */
+  .streak { margin-top: 10px; padding: 16px 0 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .streak .big { font-family: "Cormorant Garamond", Georgia, serif; font-size: 52px; font-style: italic; line-height: 1; font-weight: 600; }
+  .streak .dots { display: flex; gap: 6px; margin-top: 12px; }
+  .streak .dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--chart-grid); }
+  .streak .dots span.on { background: var(--rose); }
+
+  /* entry editor */
+  .skypick { display: flex; gap: 10px; margin-top: 8px; }
+  .skypick button { flex: 1; padding: 12px 6px 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--panel); display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+  .skypick button svg { width: 34px; height: 34px; }
+  .skypick button.on { border-color: var(--rose); background: var(--blush); }
+  .checks { border-top: 1px solid var(--line); margin-top: 8px; }
+  .checks label { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .checks input { width: 22px; height: 22px; accent-color: var(--rose); }
+  textarea, input[type=text], input[type=number], select {
+    width: 100%; font: inherit; color: inherit; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); outline: none;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { border-color: var(--rose); }
+  label.field { display: block; margin-top: 12px; font-weight: 600; font-size: 14px; }
+  label.field > * { margin-top: 6px; }
+  .photo { margin-top: 12px; border-radius: 10px; overflow: hidden; background: var(--blush); position: relative; }
+  .photo img { width: 100%; display: block; max-height: 300px; object-fit: cover; }
+  .photo .rm { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); color: #fff; border-radius: 12px; padding: 6px 10px; font-size: 13px; }
+
+  .entry { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .entry .thumb { width: 64px; height: 64px; border-radius: 8px; background: var(--blush); flex: none; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .entry .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .entry .thumb svg { width: 28px; height: 28px; }
+  .entry strong { display: block; }
+
+  /* charts */
+  .chart { margin-top: 10px; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; touch-action: none; }
+  .readout { min-height: 22px; font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .bars div { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 15px; }
+  .bars .lbl { width: 120px; flex: none; }
+  .bars .bar { height: 12px; border-radius: 2px; background: var(--rose); }
+  .bars .n { color: var(--muted); font-size: 14px; }
+
+  /* scale buttons */
+  .scale { display: flex; gap: 8px; margin-top: 6px; }
+  .scale button { flex: 1; height: 44px; border-radius: 8px; border: 2px solid var(--line); background: var(--panel); font-weight: 700; }
+  .scale button.on { background: var(--rose); border-color: var(--rose); color: #fff; }
+  .metric { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .metric .row.between strong { font-size: 16px; }
+  .metric input[type=number] { width: 120px; }
+  .linkbtn { color: var(--rosedeep); font-weight: 700; font-size: 14px; }
+  .danger { color: #c94a4a; }
+
+  /* sheet */
+  .sheet { position: fixed; inset: 0; background: rgba(42,22,54,0.45); display: none; align-items: flex-end; z-index: 20; }
+  .sheet.open { display: flex; }
+  .sheet .panel { background: var(--bg1); width: 100%; max-width: 640px; margin: 0 auto; border-radius: 16px 16px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); max-height: 88vh; overflow: auto; }
+  .sheet h2 { margin-top: 4px; }
+  .presets button { display: block; width: 100%; text-align: left; padding: 12px 0; border-bottom: 1px solid var(--line); }
+
+  /* tab bar */
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bar); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 8px 10px calc(10px + env(safe-area-inset-bottom)); z-index: 10; }
+  .tabs button { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 14px; border-radius: 12px; }
+  .tabs button svg { width: 24px; height: 24px; }
+  .tabs button.on { color: var(--rosedeep); }
+  .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--bg1); padding: 10px 16px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 30; }
+  .toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- TONIGHT -->
+<section class="screen active" id="tab-tonight">
+  <div class="topline">
+    <div>
+      <h1 id="t-date">Tonight</h1>
+      <div class="muted" id="t-place">Parrish, Florida</div>
+    </div>
+    <button class="iconbtn" id="btn-settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+
+  <div class="sky" id="sky">
+    <div class="moonwrap">
+      <svg id="moon-svg" viewBox="0 0 100 100"></svg>
+      <div>
+        <h2 id="moon-name">Moon</h2>
+        <div class="muted" id="moon-detail"></div>
+      </div>
+    </div>
+    <div class="times" id="sun-times"></div>
+  </div>
+
+  <h2>Worth looking up for</h2>
+  <div class="list" id="planets"></div>
+
+  <h2>Space station</h2>
+  <div class="list" id="iss"><div class="item"><div><strong>Checking tonight's passes</strong><div class="small muted">Needs a connection the first time each day.</div></div></div></div>
+
+  <h2>Meteors</h2>
+  <div class="list" id="meteors"></div>
+
+  <h2>Overhead around 10 pm</h2>
+  <p class="muted small" id="overhead"></p>
+  <div class="imagebox" id="hubble"><div class="cap"><strong>Finding a Hubble view of what's above you</strong>Needs a connection.</div></div>
+
+  <div style="margin-top:26px"><button class="btn wide" id="btn-log">Log tonight's sky</button></div>
+  <p class="muted small" style="margin-top:14px">Positions are computed on your phone from standard orbital elements. Planet times are good to a few minutes. Horizon times assume a flat horizon.</p>
+</section>
+
+<!-- DIARY -->
+<section class="screen" id="tab-diary">
+  <div class="topline"><div><h1>Diary</h1></div></div>
+  <div class="streak" id="streak"></div>
+
+  <h2 id="editor-title">Tonight</h2>
+  <div class="muted small" id="editor-date"></div>
+  <div class="skypick" id="skypick">
+    <button data-sky="clear"><svg viewBox="0 0 40 40" fill="none"><path d="M20 5l2.6 7.4L30 13l-6 4.6 2.2 7.6L20 20.8l-6.2 4.4 2.2-7.6-6-4.6 7.4-.6z" fill="#e4548c"/><circle cx="31" cy="30" r="1.6" fill="#8e6fd6"/><circle cx="8" cy="29" r="1.2" fill="#8e6fd6"/></svg>Clear</button>
+    <button data-sky="some"><svg viewBox="0 0 40 40" fill="none"><path d="M26 7l1.8 5 5 .4-4 3.1 1.5 5.1L26 17.8l-4.3 2.8 1.5-5.1-4-3.1 5-.4z" fill="#e4548c"/><path d="M11 32h14a5 5 0 0 0 .5-10 7 7 0 0 0-13.4-1.6A5.8 5.8 0 0 0 11 32z" fill="#cdb7f5"/></svg>Some cloud</button>
+    <button data-sky="cloudy"><svg viewBox="0 0 40 40" fill="none"><path d="M9 30h18a6 6 0 0 0 .6-12A8 8 0 0 0 12 16.3 6.9 6.9 0 0 0 9 30z" fill="#cdb7f5"/><path d="M16 34h14a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6-1.2A4.6 4.6 0 0 0 16 34z" fill="#e4548c" opacity=".8"/></svg>Cloudy</button>
+  </div>
+
+  <h3>What you saw</h3>
+  <div class="checks" id="seen"></div>
+  <button class="linkbtn" id="btn-addseen" style="margin-top:8px">Add something else</button>
+
+  <label class="field">A note for tonight<textarea id="note" placeholder="How did it feel? Who were you with? Anything surprising?"></textarea></label>
+
+  <div class="photo hidden" id="photo"><img id="photo-img" alt="Tonight's photo"><button class="rm" id="photo-rm">Remove</button></div>
+  <div class="row" style="margin-top:14px">
+    <label class="btn soft" style="flex:1">Add a photo<input type="file" id="photo-in" accept="image/*" hidden></label>
+    <button class="btn" style="flex:1" id="btn-save">Save</button>
+  </div>
+  <button class="linkbtn danger hidden" id="btn-delete" style="margin-top:12px">Delete this entry</button>
+
+  <h2>Past nights</h2>
+  <div id="entries"></div>
+
+  <h2>Your sky so far</h2>
+  <h3>Nights logged</h3>
+  <div class="chart" id="cal-chart"></div>
+  <div class="readout" id="cal-readout">Hover or tap a night for details.</div>
+  <h3>Clear nights</h3>
+  <p id="clear-share" class="muted"></p>
+  <h3>Collection</h3>
+  <div class="bars" id="collection"></div>
+</section>
+
+<!-- SPARKLINE -->
+<section class="screen" id="tab-spark">
+  <div class="topline"><div><h1>Sparkline</h1></div>
+    <button class="iconbtn" id="btn-metrics" aria-label="Manage metrics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+  <div class="row between" style="margin-top:4px">
+    <button class="iconbtn" id="sp-prev" aria-label="Previous day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <div style="text-align:center"><strong id="sp-date"></strong><div class="muted small" id="sp-rel"></div></div>
+    <button class="iconbtn" id="sp-next" aria-label="Next day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div id="sp-inputs"></div>
+
+  <h2>The last 30 days</h2>
+  <div id="sp-charts"></div>
+
+  <h2>Two things together</h2>
+  <div class="row">
+    <select id="pair-a"></select><span class="muted">and</span><select id="pair-b"></select>
+  </div>
+  <div class="chart" id="pair-chart"></div>
+  <div class="readout" id="pair-readout"></div>
+  <p class="muted small" id="pair-text"></p>
+
+  <h2>Backup</h2>
+  <div class="row">
+    <button class="btn soft" style="flex:1" id="btn-export">Export</button>
+    <label class="btn soft" style="flex:1">Import<input type="file" id="import-in" accept="application/json" hidden></label>
+  </div>
+  <p class="muted small" style="margin-top:10px">Everything lives on this phone. Export now and then so you have a copy.</p>
+</section>
+
+<!-- SETTINGS SHEET -->
+<div class="sheet" id="sheet-settings"><div class="panel">
+  <h2>Where you're looking from</h2>
+  <p class="muted small">Rise and set times depend on where you stand.</p>
+  <button class="btn wide" id="btn-geo" style="margin-top:12px">Use my location</button>
+  <div class="presets" id="presets" style="margin-top:14px"></div>
+  <div class="row" style="margin-top:14px">
+    <label class="field" style="flex:1;margin:0">Latitude<input type="number" id="lat" step="0.01"></label>
+    <label class="field" style="flex:1;margin:0">Longitude<input type="number" id="lon" step="0.01"></label>
+  </div>
+  <label class="field">Place name<input type="text" id="place"></label>
+  <div class="row" style="margin-top:16px"><button class="btn" style="flex:1" id="btn-save-loc">Save</button><button class="btn soft" style="flex:1" data-close>Close</button></div>
+</div></div>
+
+<!-- METRICS SHEET -->
+<div class="sheet" id="sheet-metrics"><div class="panel">
+  <h2>Your metrics</h2>
+  <div id="metric-list"></div>
+  <h3>Add one</h3>
+  <label class="field">Name<input type="text" id="m-name" placeholder="Water, pages read, pug walks"></label>
+  <div class="row" style="margin-top:12px">
+    <label class="field" style="flex:1;margin:0">Kind<select id="m-kind"><option value="scale">1 to 5</option><option value="number">A number</option></select></label>
+    <label class="field" style="flex:1;margin:0">Unit<input type="text" id="m-unit" placeholder="minutes, cups"></label>
+  </div>
+  <div class="row" style="margin-top:16px"><button class="btn" style="flex:1" id="btn-add-metric">Add</button><button class="btn soft" style="flex:1" data-close>Close</button></div>
+</div></div>
+
+<nav class="tabs">
+  <button data-tab="tonight" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/><path d="M19 3v3M17.5 4.5h3"/></svg>Tonight</button>
+  <button data-tab="diary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/><path d="M8 8h7"/></svg>Diary</button>
+  <button data-tab="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 4-7 5 5"/><path d="M3 21h18"/></svg>Sparkline</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js" defer></script>
+<script>
+/* ---------- astronomy ---------- */
+const RAD = Math.PI/180, DEG = 180/Math.PI;
+const norm = x => ((x % 360) + 360) % 360;
+const jd = d => d.getTime()/86400000 + 2440587.5;
+const cent = j => (j - 2451545)/36525;
+const gmst = j => { const t = cent(j); return norm(280.46061837 + 360.98564736629*(j-2451545) + 0.000387933*t*t); };
+function eclToEq(lon, lat, eps){
+  const l=lon*RAD, b=lat*RAD, e=eps*RAD;
+  const ra=Math.atan2(Math.sin(l)*Math.cos(e)-Math.tan(b)*Math.sin(e), Math.cos(l));
+  const dec=Math.asin(Math.sin(b)*Math.cos(e)+Math.cos(b)*Math.sin(e)*Math.sin(l));
+  return {ra:norm(ra*DEG), dec:dec*DEG};
+}
+function sunPos(j){
+  const t=cent(j), L0=norm(280.46646+36000.76983*t), M=norm(357.52911+35999.05029*t), Mr=M*RAD;
+  const C=(1.914602-0.004817*t)*Math.sin(Mr)+0.019993*Math.sin(2*Mr)+0.000289*Math.sin(3*Mr);
+  const lon=norm(L0+C), eps=23.439291-0.0130042*t;
+  return {...eclToEq(lon,0,eps), lon, lat:0};
+}
+function moonPos(j){
+  const t=cent(j);
+  const Lp=norm(218.3164477+481267.88123421*t), D=norm(297.8501921+445267.1114034*t), M=norm(357.5291092+35999.0502909*t), Mp=norm(134.9633964+477198.8675055*t), F=norm(93.2720950+483202.0175233*t);
+  const s=x=>Math.sin(x*RAD), c=x=>Math.cos(x*RAD);
+  const lon=Lp+6.289*s(Mp)+1.274*s(2*D-Mp)+0.658*s(2*D)+0.214*s(2*Mp)-0.186*s(M)-0.114*s(2*F)+0.059*s(2*D-2*Mp)+0.057*s(2*D-M-Mp)+0.053*s(2*D+Mp)+0.046*s(2*D-M)+0.041*s(M-Mp)-0.035*s(D)-0.031*s(M+Mp);
+  const lat=5.128*s(F)+0.281*s(Mp+F)+0.278*s(Mp-F)+0.173*s(2*D-F)+0.055*s(2*D-F+Mp)+0.046*s(2*D-F-Mp)+0.033*s(2*D+F)+0.017*s(2*Mp+F);
+  const dist=385001-20905*c(Mp)-3699*c(2*D-Mp)-2956*c(2*D)-570*c(2*Mp);
+  const eps=23.439291-0.0130042*t;
+  return {...eclToEq(norm(lon),lat,eps), lon:norm(lon), lat, dist};
+}
+const EL = {
+  mercury:[0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593,0.00000037,0.00001906,-0.00594749,149472.67411175,0.16047689,-0.12534081],
+  venus:[0.72333566,0.00677672,3.39467605,181.97909950,131.60246718,76.67984255,0.00000390,-0.00004107,-0.00078890,58517.81538729,0.00268329,-0.27769418],
+  earth:[1.00000261,0.01671123,-0.00001531,100.46457166,102.93768193,0.0,0.00000562,-0.00004392,-0.01294668,35999.37244981,0.32327364,0.0],
+  mars:[1.52371034,0.09339410,1.84969142,-4.55343205,-23.94362959,49.55953891,0.00001847,0.00007882,-0.00813131,19140.30268499,0.44441088,-0.29257343],
+  jupiter:[5.20288700,0.04838624,1.30439695,34.39644051,14.72847983,100.47390909,-0.00011607,-0.00013253,-0.00183714,3034.74612775,0.21252668,0.20469106],
+  saturn:[9.53667594,0.05386179,2.48599187,49.95424423,92.59887831,113.66242448,-0.00125060,-0.00050991,0.00193609,1222.49362201,-0.41897216,-0.28867794]
+};
+function helio(name,t){
+  const e=EL[name]; const a=e[0]+e[6]*t, ec=e[1]+e[7]*t, I=(e[2]+e[8]*t)*RAD, L=e[3]+e[9]*t, wb=e[4]+e[10]*t, Omd=e[5]+e[11]*t, Om=Omd*RAD, w=(wb-Omd)*RAD;
+  const M=norm(L-wb)*RAD; let E=M+ec*Math.sin(M);
+  for(let i=0;i<10;i++){ E=E-(E-ec*Math.sin(E)-M)/(1-ec*Math.cos(E)); }
+  const xp=a*(Math.cos(E)-ec), yp=a*Math.sqrt(1-ec*ec)*Math.sin(E);
+  const cw=Math.cos(w),sw=Math.sin(w),cO=Math.cos(Om),sO=Math.sin(Om),cI=Math.cos(I),sI=Math.sin(I);
+  return { x:(cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp, y:(cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp, z:(sw*sI)*xp+(cw*sI)*yp };
+}
+function planetPos(name,j){
+  const t=cent(j), p=helio(name,t), e=helio('earth',t);
+  const x=p.x-e.x, y=p.y-e.y, z=p.z-e.z;
+  const lon=norm(Math.atan2(y,x)*DEG), lat=Math.atan2(z,Math.hypot(x,y))*DEG;
+  return {...eclToEq(lon,lat,23.4393), dist:Math.hypot(x,y,z)};
+}
+function altaz(ra,dec,j,lat,lon){
+  const lst=norm(gmst(j)+lon), H=(lst-ra)*RAD, f=lat*RAD, d=dec*RAD;
+  const alt=Math.asin(Math.sin(f)*Math.sin(d)+Math.cos(f)*Math.cos(d)*Math.cos(H));
+  const az=Math.atan2(Math.sin(H), Math.cos(H)*Math.sin(f)-Math.tan(d)*Math.cos(f));
+  return {alt:alt*DEG, az:norm(az*DEG+180)};
+}
+const angSep=(a,b)=>Math.acos(Math.min(1,Math.sin(a.dec*RAD)*Math.sin(b.dec*RAD)+Math.cos(a.dec*RAD)*Math.cos(b.dec*RAD)*Math.cos((a.ra-b.ra)*RAD)))*DEG;
+const compass = az => ['north','northeast','east','southeast','south','southwest','west','northwest'][Math.round(az/45)%8];
+function bodyAlt(body, j, lat, lon){
+  let p;
+  if(body==='sun') p=sunPos(j); else if(body==='moon') p=moonPos(j); else p=planetPos(body,j);
+  const aa=altaz(p.ra,p.dec,j,lat,lon);
+  if(body==='moon') aa.alt -= (6378/p.dist)*DEG*Math.cos(aa.alt*RAD); // parallax
+  return aa;
+}
+// night window: local noon today (or yesterday if before noon) to next noon
+function nightStart(now){ const d=new Date(now); if(d.getHours()<12) d.setDate(d.getDate()-1); d.setHours(12,0,0,0); return d; }
+function nightKey(now){ const d=nightStart(now); return d.toLocaleDateString('en-CA'); }
+function crossings(fn, start, end, stepMin, threshold){
+  // returns [{t, dir:'down'|'up'}] where fn crosses threshold, bisected to ~15 s
+  const out=[]; let prev=null, tPrev=null;
+  for(let t=start.getTime(); t<=end.getTime(); t+=stepMin*60000){
+    const v=fn(new Date(t));
+    if(prev!==null && (prev-threshold)*(v-threshold)<0){
+      let a=tPrev,b=t,va=prev;
+      for(let i=0;i<10;i++){ const m=(a+b)/2, vm=fn(new Date(m)); if((va-threshold)*(vm-threshold)<0){ b=m; } else { a=m; va=vm; } }
+      out.push({t:new Date((a+b)/2), dir: v<prev?'down':'up'});
+    }
+    prev=v; tPrev=t;
+  }
+  return out;
+}
+function sunEvents(now, lat, lon){
+  const s=nightStart(now), e=new Date(s.getTime()+86400000);
+  const f=d=>bodyAlt('sun',jd(d),lat,lon).alt;
+  const set=crossings(f,s,e,10,-0.833).find(c=>c.dir==='down');
+  const rise=crossings(f,s,e,10,-0.833).find(c=>c.dir==='up');
+  const dark=crossings(f,s,e,10,-18).find(c=>c.dir==='down');
+  const dawn=crossings(f,s,e,10,-18).find(c=>c.dir==='up');
+  const dusk=crossings(f,s,e,10,-6).find(c=>c.dir==='down');
+  return {start:s, end:e, set:set&&set.t, rise:rise&&rise.t, dark:dark&&dark.t, dawn:dawn&&dawn.t, dusk:dusk&&dusk.t};
+}
+function bodyNight(body, sun, lat, lon){
+  // what this body does between sunset and sunrise
+  const from=sun.set||sun.start, to=sun.rise||sun.end;
+  const f=d=>bodyAlt(body,jd(d),lat,lon).alt;
+  const cr=crossings(f, new Date(from.getTime()-3600000*3), new Date(to.getTime()+3600000*3), 10, -0.57);
+  let max={alt:-90,t:null};
+  for(let t=from.getTime(); t<=to.getTime(); t+=15*60000){ const d=new Date(t), a=f(d); if(a>max.alt) max={alt:a,t:d,az:bodyAlt(body,jd(d),lat,lon).az}; }
+  const atDusk=bodyAlt(body,jd(sun.dusk||from),lat,lon);
+  const rise=cr.find(c=>c.dir==='up'&&c.t>=new Date(from.getTime()-3600000*3)&&c.t<=to);
+  const set=cr.find(c=>c.dir==='down'&&c.t>=from&&c.t<=new Date(to.getTime()+3600000*3));
+  return {max, atDusk, rise:rise&&rise.t, set:set&&set.t, upAtDusk:atDusk.alt>3};
+}
+function moonPhase(j){
+  const m=moonPos(j), s=sunPos(j);
+  const el=norm(m.lon-s.lon);
+  const cosPsi=Math.cos(m.lat*RAD)*Math.cos((m.lon-s.lon)*RAD);
+  const k=(1-cosPsi)/2;
+  const names=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+  const name=names[Math.floor(((el+22.5)%360)/45)];
+  return {k, el, name, waxing: el<180};
+}
+const SHOWERS=[
+  {name:'Quadrantids',peak:[1,3],from:[12,28],to:[1,12],zhr:120},
+  {name:'Lyrids',peak:[4,22],from:[4,14],to:[4,30],zhr:18},
+  {name:'Eta Aquariids',peak:[5,5],from:[4,19],to:[5,28],zhr:50},
+  {name:'Delta Aquariids',peak:[7,30],from:[7,12],to:[8,23],zhr:25},
+  {name:'Perseids',peak:[8,12],from:[7,17],to:[8,24],zhr:100},
+  {name:'Draconids',peak:[10,8],from:[10,6],to:[10,10],zhr:10},
+  {name:'Orionids',peak:[10,21],from:[10,2],to:[11,7],zhr:20},
+  {name:'Taurids',peak:[11,10],from:[10,20],to:[12,10],zhr:5},
+  {name:'Leonids',peak:[11,17],from:[11,6],to:[11,30],zhr:15},
+  {name:'Geminids',peak:[12,14],from:[12,4],to:[12,17],zhr:150},
+  {name:'Ursids',peak:[12,22],from:[12,17],to:[12,26],zhr:10}
+];
+const CONST=[
+  ['Andromeda',1,38,'Andromeda galaxy'],['Aquarius',22.5,-10,'Helix Nebula'],['Aquila',19.7,5,'Aquila nebula'],['Aries',2.6,20,'Aries galaxy'],
+  ['Auriga',6,42,'Flaming Star Nebula'],['Bootes',14.7,30,'Bootes galaxy'],['Cancer',8.6,20,'Beehive cluster'],['Canis Major',6.8,-22,'Thor\'s Helmet nebula'],
+  ['Capricornus',21,-20,'Capricornus galaxy'],['Cassiopeia',1,60,'Cassiopeia A supernova remnant'],['Cepheus',22,70,'Iris Nebula'],['Cetus',1.7,-8,'Cetus galaxy'],
+  ['Cygnus',20.6,42,'Veil Nebula'],['Draco',17,65,'Cat\'s Eye Nebula'],['Gemini',7,22,'Eskimo Nebula'],['Hercules',17.3,27,'M13 globular cluster'],
+  ['Leo',10.6,15,'Leo Triplet galaxy'],['Libra',15.2,-15,'Libra galaxy'],['Lyra',18.8,36,'Ring Nebula'],['Ophiuchus',17.2,-5,'Ophiuchus nebula'],
+  ['Orion',5.6,5,'Orion Nebula'],['Pegasus',22.7,20,'Stephan\'s Quintet'],['Perseus',3.3,45,'Perseus cluster galaxy'],['Pisces',0.8,13,'M74 galaxy'],
+  ['Sagittarius',19,-25,'Lagoon Nebula'],['Scorpius',16.9,-30,'Butterfly Nebula'],['Taurus',4.7,16,'Crab Nebula'],['Ursa Major',11,55,'Pinwheel galaxy'],
+  ['Virgo',13.4,-3,'Sombrero galaxy'],['Canes Venatici',13,40,'Whirlpool galaxy'],['Monoceros',7,-3,'Cone Nebula'],['Puppis',7.5,-32,'Puppis cluster'],
+  ['Eridanus',3.5,-15,'Eridanus galaxy'],['Lacerta',22.5,45,'Lacerta galaxy'],['Delphinus',20.7,13,'Delphinus cluster'],['Lepus',5.5,-19,'M79 globular cluster']
+];
+function overhead(sun, lat, lon){
+  const d=new Date(sun.start); d.setHours(22,0,0,0); const j=jd(d);
+  return CONST.map(c=>({name:c[0], target:c[3], alt:altaz(c[1]*15,c[2],j,lat,lon).alt})).filter(c=>c.alt>35).sort((a,b)=>b.alt-a.alt).slice(0,4);
+}
+</script>
+<script>
+/* ---------- storage ---------- */
+const $ = s => document.querySelector(s);
+const load = (k, d) => { try { const v = localStorage.getItem('sd.'+k); return v ? JSON.parse(v) : d; } catch(e){ return d; } };
+const save = (k, v) => { try { localStorage.setItem('sd.'+k, JSON.stringify(v)); } catch(e){ toast('Could not save. Storage may be full.'); } };
+const idb = {
+  db:null,
+  open(){ return new Promise(res=>{ if(this.db) return res(this.db); const r=indexedDB.open('stardust',1); r.onupgradeneeded=()=>r.result.createObjectStore('photos'); r.onsuccess=()=>{this.db=r.result;res(this.db);}; r.onerror=()=>res(null); }); },
+  async put(k,v){ const db=await this.open(); if(!db) return; return new Promise(res=>{ const tx=db.transaction('photos','readwrite'); tx.objectStore('photos').put(v,k); tx.oncomplete=res; tx.onerror=res; }); },
+  async get(k){ const db=await this.open(); if(!db) return null; return new Promise(res=>{ const r=db.transaction('photos').objectStore('photos').get(k); r.onsuccess=()=>res(r.result||null); r.onerror=()=>res(null); }); },
+  async del(k){ const db=await this.open(); if(!db) return; return new Promise(res=>{ const tx=db.transaction('photos','readwrite'); tx.objectStore('photos').delete(k); tx.oncomplete=res; tx.onerror=res; }); },
+  async all(){ const db=await this.open(); if(!db) return {}; return new Promise(res=>{ const out={}; const r=db.transaction('photos').objectStore('photos').openCursor(); r.onsuccess=()=>{ const c=r.result; if(c){ out[c.key]=c.value; c.continue(); } else res(out); }; r.onerror=()=>res(out); }); }
+};
+const PRESETS=[['Parrish, Florida',27.58,-82.42],['Cape Canaveral, Florida',28.39,-80.6],['Washington, DC',38.9,-77.04],['New York, New York',40.71,-74.01],['Paris, France',48.86,2.35]];
+let loc = load('loc', {name:'Parrish, Florida', lat:27.58, lon:-82.42});
+let entries = load('entries', {});
+let metrics = load('metrics', [
+  {id:'sleep',name:'Sleep',kind:'number',unit:'hours'},
+  {id:'mood',name:'Mood',kind:'scale',unit:''},
+  {id:'energy',name:'Energy',kind:'scale',unit:''},
+  {id:'french',name:'French',kind:'number',unit:'minutes'},
+  {id:'walk',name:'Walks',kind:'number',unit:'minutes'}
+]);
+let days = load('days', {});
+let customSeen = load('customSeen', []);
+let tele = load('tele', 'auto');
+
+const fmtT = d => d ? d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}) : '';
+const fmtD = k => { const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'}); };
+const todayKey = () => new Date().toLocaleDateString('en-CA');
+const addDays = (k,n) => { const [y,m,d]=k.split('-').map(Number); const dt=new Date(y,m-1,d+n); return dt.toLocaleDateString('en-CA'); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function showTab(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id==='tab-'+name));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name));
+  window.scrollTo(0,0);
+  if(name==='diary') renderDiary();
+  if(name==='spark') renderSpark();
+}
+
+/* ---------- tonight ---------- */
+let tonight = {};
+function renderTonight(){
+  const now=new Date();
+  const sun=sunEvents(now, loc.lat, loc.lon);
+  tonight.sun=sun;
+  const ns=nightStart(now);
+  $('#t-date').textContent = ns.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+  $('#t-place').textContent = loc.name;
+
+  // moon
+  const jmid = jd(sun.dark || sun.set || now);
+  const ph = moonPhase(jmid);
+  const mn = bodyNight('moon', sun, loc.lat, loc.lon);
+  $('#moon-name').textContent = ph.name;
+  let md = Math.round(ph.k*100)+'% lit. ';
+  if(mn.upAtDusk) md += 'Up at dusk' + (mn.set ? ', sets '+fmtT(mn.set) : ', up all night') + '.';
+  else if(mn.rise) md += 'Rises '+fmtT(mn.rise)+ (mn.set && mn.set>mn.rise ? ', sets '+fmtT(mn.set) : '') + '.';
+  else md += 'Not up tonight. Dark skies.';
+  $('#moon-detail').textContent = md;
+  drawMoon(ph);
+  $('#sun-times').innerHTML = [['Sunset',sun.set],['Fully dark',sun.dark],['Dawn',sun.dawn],['Sunrise',sun.rise]].map(([l,t])=>`<div>${l}<strong>${t?fmtT(t):'none'}</strong></div>`).join('');
+
+  // planets
+  const names={mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn'};
+  const up=[], down=[];
+  tonight.visible=[];
+  for(const p of Object.keys(names)){
+    const b=bodyNight(p, sun, loc.lat, loc.lon);
+    let text='';
+    if(b.upAtDusk){
+      const low=b.atDusk.alt<12;
+      text = (low?'Low in the ':'Already up at dusk, ')+(low?compass(b.atDusk.az)+' right after sunset':Math.round(b.atDusk.alt)+' degrees up in the '+compass(b.atDusk.az));
+      text += b.set ? '. Sets '+fmtT(b.set)+'.' : '. Up all night.';
+      if(low) text += ' Needs a clear horizon.';
+    } else if(b.rise && b.max.alt>5){
+      const dawnish = sun.dawn && b.rise>sun.dawn;
+      const climbing = sun.rise && Math.abs(b.max.t-sun.rise)<20*60000;
+      text = 'Rises '+fmtT(b.rise)+' in the '+compass(bodyAlt(p,jd(b.rise),loc.lat,loc.lon).az)+(dawnish?', low in the dawn glow.':'. '+(climbing?'Still climbing at sunrise.':'Highest around '+fmtT(b.max.t)+'.'));
+    }
+    const elong = angSep(planetPos(p,jd(sun.dark||sun.set||now)), sunPos(jd(sun.dark||sun.set||now)));
+    if(elong<12) text = '';
+    if(text){ up.push({name:names[p], text, max:b.max.alt}); tonight.visible.push(names[p]); } else down.push(names[p]);
+  }
+  const planetIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#b83a6b" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M3.5 9.5c5-2 12-2 17 0M3.5 14.5c5 2 12 2 17 0" opacity=".7"/></svg>';
+  $('#planets').innerHTML = up.map(u=>`<div class="item"><div class="ico">${planetIcon}</div><div><strong>${u.name}</strong><div class="small muted">${u.text}</div></div></div>`).join('') + (down.length?`<div class="item"><div><div class="small muted">Not tonight: ${down.join(', ')}.</div></div></div>`:'');
+
+  // meteors
+  const m=ns.getMonth()+1, d=ns.getDate();
+  const doy=(mm,dd)=>mm*31+dd;
+  const active=SHOWERS.filter(s=>{ const f=doy(...s.from), t=doy(...s.to), n=doy(m,d); return f<=t ? (n>=f&&n<=t) : (n>=f||n<=t); });
+  const meteorIcon='<svg viewBox="0 0 24 24" fill="none" stroke="#8e6fd6" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l10 10"/><path d="M9 3l2 3M3 9l3 2"/><circle cx="16.5" cy="16.5" r="3.5" fill="#cdb7f5" stroke="none"/></svg>';
+  let mh = active.map(s=>{
+    const peak=new Date(ns.getFullYear()+(s.peak[0]<m-6?1:0), s.peak[0]-1, s.peak[1]);
+    const dd=Math.round((peak-ns)/86400000);
+    const when = dd===0?'Peaks tonight.':dd>0?`Peaks in ${dd} night${dd===1?'':'s'}.`:`Peaked ${-dd} night${dd===-1?'':'s'} ago, still active.`;
+    const moonnote = ph.k>0.6 && mn.upAtDusk ? ' The bright moon will wash out the faint ones.' : '';
+    return `<div class="item"><div class="ico">${meteorIcon}</div><div><strong>${s.name}</strong><div class="small muted">${when} Up to about ${s.zhr} an hour under perfect skies.${moonnote}</div></div></div>`;
+  }).join('');
+  if(!active.length){
+    const next=SHOWERS.map(s=>{ let p=new Date(ns.getFullYear(), s.peak[0]-1, s.peak[1]); if(p<ns) p.setFullYear(p.getFullYear()+1); return {s,p}; }).sort((a,b)=>a.p-b.p)[0];
+    mh=`<div class="item"><div class="ico">${meteorIcon}</div><div><strong>Quiet for meteors</strong><div class="small muted">Next up: the ${next.s.name}, peaking ${next.p.toLocaleDateString([], {month:'long', day:'numeric'})}.</div></div></div>`;
+  }
+  $('#meteors').innerHTML=mh;
+
+  // overhead and telescope image
+  const oh=overhead(sun, loc.lat, loc.lon);
+  tonight.overhead=oh;
+  $('#overhead').textContent = oh.length ? 'Highest up: '+oh.map(c=>c.name).join(', ')+'.' : 'Nothing from the list is high up at 10 pm from here.';
+  loadTelescope();
+  loadISS();
+}
+function drawMoon(ph){
+  const k=ph.k, wax=ph.waxing;
+  const rx=45*Math.abs(Math.cos(ph.el*RAD));
+  let path;
+  if(wax){ path=`M50,5 A45,45 0 0 1 50,95 A${rx},45 0 0 ${k<0.5?0:1} 50,5 Z`; }
+  else { path=`M50,5 A45,45 0 0 0 50,95 A${rx},45 0 0 ${k<0.5?1:0} 50,5 Z`; }
+  $('#moon-svg').innerHTML = `<circle cx="50" cy="50" r="45" fill="#4a2456" stroke="#8a5a94" stroke-width="1"/><path d="${path}" fill="#fff0f6"/><circle cx="36" cy="40" r="5" fill="#000" opacity=".06"/><circle cx="60" cy="62" r="7" fill="#000" opacity=".06"/><circle cx="58" cy="30" r="3" fill="#000" opacity=".06"/>`;
+}
+
+/* telescope image: Hubble, Webb, Roman */
+async function loadTelescope(force){
+  const box=$('#hubble');
+  const oh=tonight.overhead||[];
+  const ns=nightStart(new Date());
+  const doy=Math.floor((ns-new Date(ns.getFullYear(),0,0))/86400000);
+  let which = tele==='auto' ? (doy%2 ? 'Webb' : 'Hubble') : tele;
+  const target = oh.length ? oh[doy % oh.length] : null;
+  const label = {Hubble:'Hubble', Webb:'Webb', Roman:'Roman'}[which];
+  const ctrl = `<div class="row" style="padding:10px 14px 12px;gap:8px;background:var(--night1)">${['Hubble','Webb','Roman'].map(t=>`<button class="btn soft" style="flex:1;padding:8px 6px;font-size:13px;${(t===which)?'background:#fff0f6;color:#3b2344':'background:rgba(255,255,255,0.08);color:#fbeaf2'}" data-tele="${t}">${t}</button>`).join('')}</div>`;
+  const render = (img, title, sub) => { box.innerHTML = (img?`<img src="${img}" alt="${esc(title)}">`:'') + `<div class="cap"><strong>${esc(title)}</strong>${esc(sub)}</div>` + ctrl; box.querySelectorAll('[data-tele]').forEach(b=>b.addEventListener('click',()=>{ tele=b.dataset.tele; save('tele',tele); loadTelescope(true); })); };
+  let q, sub;
+  if(which==='Roman'){ q='Nancy Grace Roman Space Telescope'; sub='Roman is NASA\'s wide-field infrared survey telescope. Each of its images covers a patch of sky a hundred times bigger than a Hubble frame.'; }
+  else if(target){ q=`${which} ${target.target}`; sub=`${target.name} is high overhead tonight. This is how ${which} sees ${target.target.replace(/ galaxy$| nebula$/i, m=>m)}.`; }
+  else { q=`${which} nebula`; sub=`A favourite from ${which}.`; }
+  const key='img.'+ns.toLocaleDateString('en-CA')+'.'+which+'.'+(target?target.name:'');
+  const cached=load(key,null);
+  if(cached && !force){ render(cached.img, cached.title, sub); return; }
+  render(null, `Finding a ${label} view of what's above you`, 'Needs a connection.');
+  try{
+    let items = await nasaSearch(q);
+    const must = which==='Roman' ? /roman/i : new RegExp(which,'i');
+    items = items.filter(i=>must.test(i.title+' '+i.desc));
+    if(!items.length && which!=='Roman') items = (await nasaSearch(`${which} space telescope nebula`)).filter(i=>must.test(i.title+' '+i.desc));
+    if(!items.length) throw new Error('none');
+    const pick = items[doy % items.length];
+    save(key,{img:pick.img, title:pick.title});
+    render(pick.img, pick.title, sub);
+  } catch(e){
+    render(null, `No ${label} image right now`, 'Check the connection and come back. The sky above still counts.');
+  }
+}
+async function nasaSearch(q){
+  const r=await fetch('https://images-api.nasa.gov/search?media_type=image&q='+encodeURIComponent(q));
+  const j=await r.json();
+  return (j.collection.items||[]).slice(0,40).map(i=>({ title:(i.data[0]||{}).title||'', desc:(i.data[0]||{}).description||'', img:(i.links&&i.links[0]&&i.links[0].href)||'' })).filter(i=>i.img);
+}
+
+/* ISS passes */
+async function loadISS(){
+  const box=$('#iss');
+  const fail = m => box.innerHTML=`<div class="item"><div><strong>No pass times</strong><div class="small muted">${m}</div></div></div>`;
+  let tle=load('tle',null);
+  const fresh = tle && (Date.now()-tle.at) < 20*3600000;
+  if(!fresh){
+    try{
+      let r=await fetch('https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE');
+      let txt=await r.text(); let lines=txt.trim().split('\n').map(s=>s.trim());
+      if(lines.length>=3) tle={l1:lines[1],l2:lines[2],at:Date.now()};
+      else throw new Error('bad');
+    } catch(e){
+      try{ const r=await fetch('https://api.wheretheiss.at/v1/satellites/25544/tles'); const j=await r.json(); tle={l1:j.line1,l2:j.line2,at:Date.now()}; }
+      catch(e2){ if(!tle) return fail('Needs a connection the first time each day.'); }
+    }
+    save('tle',tle);
+  }
+  if(!window.satellite){ await new Promise(res=>{ let n=0; const i=setInterval(()=>{ if(window.satellite||++n>40){ clearInterval(i); res(); } },250); }); }
+  if(!window.satellite) return fail('The orbit library did not load. Try again with a connection.');
+  const sat=satellite.twoline2satrec(tle.l1,tle.l2);
+  const obs={longitude:loc.lon*RAD, latitude:loc.lat*RAD, height:0.02};
+  const sun=tonight.sun; const from=(sun.set||new Date()).getTime(), to=(sun.rise||new Date(from+43200000)).getTime();
+  const passes=[]; let cur=null;
+  for(let t=from; t<=to; t+=10000){
+    const d=new Date(t); const pv=satellite.propagate(sat,d); if(!pv.position) continue;
+    const g=satellite.gstime(d); const ecf=satellite.eciToEcf(pv.position,g); const look=satellite.ecfToLookAngles(obs,ecf);
+    const el=look.elevation*DEG;
+    if(el>10){
+      const sp=sunPos(jd(d)); const u=[Math.cos(sp.dec*RAD)*Math.cos(sp.ra*RAD), Math.cos(sp.dec*RAD)*Math.sin(sp.ra*RAD), Math.sin(sp.dec*RAD)];
+      const r=pv.position; const s=r.x*u[0]+r.y*u[1]+r.z*u[2];
+      const perp=Math.hypot(r.x-s*u[0], r.y-s*u[1], r.z-s*u[2]);
+      const lit = !(s<0 && perp<6371);
+      const dark = altaz(sp.ra,sp.dec,jd(d),loc.lat,loc.lon).alt < -6;
+      const vis = lit && dark;
+      if(!cur) cur={start:d, maxEl:el, maxT:d, maxAz:look.azimuth*DEG, visSecs:0, end:d, startAz:look.azimuth*DEG};
+      if(el>cur.maxEl){ cur.maxEl=el; cur.maxT=d; cur.maxAz=look.azimuth*DEG; }
+      if(vis) cur.visSecs+=10; cur.end=d; cur.endAz=look.azimuth*DEG;
+    } else if(cur){ passes.push(cur); cur=null; }
+  }
+  if(cur) passes.push(cur);
+  const good=passes.filter(p=>p.visSecs>=60);
+  const issIcon='<svg viewBox="0 0 24 24" fill="none" stroke="#b83a6b" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M2 12h5M17 12h5M4.5 9v6M19.5 9v6"/></svg>';
+  if(!good.length) return box.innerHTML=`<div class="item"><div class="ico">${issIcon}</div><div><strong>No visible pass tonight</strong><div class="small muted">The station is up there, just in Earth's shadow or below the horizon while it is dark here.</div></div></div>`;
+  box.innerHTML=good.map(p=>`<div class="item"><div class="ico">${issIcon}</div><div><strong>${fmtT(p.start)} to ${fmtT(p.end)}</strong><div class="small muted">Appears in the ${compass(p.startAz)}, climbs to ${Math.round(p.maxEl)} degrees in the ${compass(p.maxAz)} at ${fmtT(p.maxT)}, fades in the ${compass(p.endAz)}. ${p.maxEl>50?'A high, bright one.':p.maxEl>25?'A good one.':'Low, so find an open view.'}</div></div></div>`).join('');
+}
+
+/* ---------- diary ---------- */
+let editKey = null;
+let editPhoto = null;
+const BASE_SEEN=['Moon','Mercury','Venus','Mars','Jupiter','Saturn','Space station','A meteor','The Milky Way','Orion','The Big Dipper','Cassiopeia','The Pleiades','A satellite','A bright star I could not name'];
+function renderDiary(){
+  if(!editKey) editKey=nightKey(new Date());
+  renderStreak();
+  renderEditor();
+  renderEntries();
+  renderStats();
+}
+function renderStreak(){
+  const keys=Object.keys(entries).sort();
+  const tk=nightKey(new Date());
+  let cur=0; let k = entries[tk] ? tk : addDays(tk,-1);
+  while(entries[k]){ cur++; k=addDays(k,-1); }
+  let best=0, run=0, prev=null;
+  for(const d of keys){ run = (prev && addDays(prev,1)===d) ? run+1 : 1; best=Math.max(best,run); prev=d; }
+  const dots=[]; for(let i=13;i>=0;i--){ dots.push(`<span class="${entries[addDays(tk,-i)]?'on':''}"></span>`); }
+  let html;
+  if(cur>0){
+    html=`<div class="big">${cur}</div><div><strong>night${cur===1?'':'s'} in a row</strong></div><p class="small">Cloudy nights count. You still looked up.${best>cur?` Your longest run is ${best}.`:''} ${keys.length} night${keys.length===1?'':'s'} logged altogether.</p>`;
+  } else if(keys.length){
+    const gap=Math.round((new Date(tk)-new Date(keys[keys.length-1]))/86400000);
+    html=`<div class="big">Welcome back</div><p class="small">Last entry was ${gap===1?'last night':gap+' nights ago'}. Tonight is a fine place to pick it up again. ${keys.length} night${keys.length===1?'':'s'} logged so far, longest run ${best}.</p>`;
+  } else {
+    html=`<div class="big">No nights yet</div><p class="small">Log tonight, even if it is cloudy, and this starts to fill in.</p>`;
+  }
+  $('#streak').innerHTML=html+`<div class="dots">${dots.join('')}</div>`;
+}
+async function renderEditor(){
+  const e=entries[editKey]||{};
+  const tk=nightKey(new Date());
+  $('#editor-title').textContent = editKey===tk ? 'Tonight' : fmtD(editKey);
+  $('#editor-date').textContent = editKey===tk ? fmtD(editKey) : 'Editing an earlier night';
+  document.querySelectorAll('#skypick button').forEach(b=>b.classList.toggle('on', b.dataset.sky===e.sky));
+  const vis=(tonight.visible||[]);
+  const list=[...new Set([...vis, ...BASE_SEEN, ...customSeen, ...(e.seen||[])])];
+  $('#seen').innerHTML=list.map(n=>`<label><input type="checkbox" value="${esc(n)}" ${(e.seen||[]).includes(n)?'checked':''}>${esc(n)}${vis.includes(n)?' <span class="muted small">up tonight</span>':''}</label>`).join('');
+  $('#note').value=e.note||'';
+  $('#btn-delete').classList.toggle('hidden', !entries[editKey]);
+  editPhoto = e.hasPhoto ? await idb.get(editKey) : null;
+  showPhoto();
+}
+function showPhoto(){ const p=$('#photo'); if(editPhoto){ $('#photo-img').src=editPhoto; p.classList.remove('hidden'); } else p.classList.add('hidden'); }
+document.querySelectorAll('#skypick button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#skypick button').forEach(x=>x.classList.toggle('on',x===b)); }));
+$('#btn-addseen').addEventListener('click',()=>{ const n=prompt('What did you see?'); if(n&&n.trim()){ customSeen.push(n.trim()); save('customSeen',customSeen); const e=entries[editKey]||{}; e.seen=[...(e.seen||[]),n.trim()]; entries[editKey]={...e, sky:e.sky||currentSky(), note:$('#note').value}; renderEditor(); } });
+const currentSky=()=>{ const b=$('#skypick button.on'); return b?b.dataset.sky:null; };
+$('#photo-in').addEventListener('change',ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const img=new Image(); const url=URL.createObjectURL(f);
+  img.onload=()=>{ const max=1400; const s=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s); c.getContext('2d').drawImage(img,0,0,c.width,c.height); editPhoto=c.toDataURL('image/jpeg',0.82); URL.revokeObjectURL(url); showPhoto(); };
+  img.src=url; ev.target.value='';
+});
+$('#photo-rm').addEventListener('click',()=>{ editPhoto=null; showPhoto(); });
+$('#btn-save').addEventListener('click',async()=>{
+  const sky=currentSky(); if(!sky){ toast('Pick how the sky looked first.'); return; }
+  const seen=[...document.querySelectorAll('#seen input:checked')].map(i=>i.value);
+  entries[editKey]={sky, seen, note:$('#note').value.trim(), hasPhoto:!!editPhoto, savedAt:Date.now()};
+  if(editPhoto) await idb.put(editKey, editPhoto); else await idb.del(editKey);
+  save('entries',entries); toast('Saved. Good night.'); renderDiary();
+});
+$('#btn-delete').addEventListener('click',async()=>{ if(!confirm('Delete this night?')) return; delete entries[editKey]; await idb.del(editKey); save('entries',entries); editKey=nightKey(new Date()); renderDiary(); });
+async function renderEntries(){
+  const keys=Object.keys(entries).sort().reverse();
+  const skyIcon={clear:'<svg viewBox="0 0 40 40"><path d="M20 5l2.6 7.4L30 13l-6 4.6 2.2 7.6L20 20.8l-6.2 4.4 2.2-7.6-6-4.6 7.4-.6z" fill="#e4548c"/></svg>', some:'<svg viewBox="0 0 40 40"><path d="M11 32h14a5 5 0 0 0 .5-10 7 7 0 0 0-13.4-1.6A5.8 5.8 0 0 0 11 32z" fill="#cdb7f5"/></svg>', cloudy:'<svg viewBox="0 0 40 40"><path d="M9 30h18a6 6 0 0 0 .6-12A8 8 0 0 0 12 16.3 6.9 6.9 0 0 0 9 30z" fill="#cdb7f5"/></svg>'};
+  const photos = keys.some(k=>entries[k].hasPhoto) ? await idb.all() : {};
+  $('#entries').innerHTML = keys.length ? keys.map(k=>{ const e=entries[k]; return `<div class="entry" data-k="${k}"><div class="thumb">${photos[k]?`<img src="${photos[k]}" alt="">`:skyIcon[e.sky]||''}</div><div><strong>${fmtD(k)}</strong><div class="small muted">${{clear:'Clear',some:'Some cloud',cloudy:'Cloudy'}[e.sky]||''}${e.seen&&e.seen.length?' · '+esc(e.seen.slice(0,3).join(', '))+(e.seen.length>3?' and more':''):''}</div>${e.note?`<div class="small">${esc(e.note.slice(0,90))}${e.note.length>90?'…':''}</div>`:''}</div></div>`; }).join('') : '<p class="muted">Nothing yet. Tonight could be the first.</p>';
+  document.querySelectorAll('.entry').forEach(el=>el.addEventListener('click',()=>{ editKey=el.dataset.k; renderEditor(); window.scrollTo({top:$('#editor-title').offsetTop-80, behavior:'smooth'}); }));
+}
+function renderStats(){
+  const tk=nightKey(new Date());
+  const weeks=12, cell=26, r=9;
+  const col={clear:'var(--rose)', some:'var(--lavdeep)', cloudy:'var(--muted)'};
+  let cells=[]; const first=addDays(tk,-(weeks*7-1));
+  const [fy,fm,fd]=first.split('-').map(Number); const dow=(new Date(fy,fm-1,fd).getDay()+6)%7; // Monday=0
+  for(let i=0;i<weeks*7;i++){ const k=addDays(first,i); const idx=i+dow; const x=Math.floor(idx/7)*cell+cell/2, y=(idx%7)*cell+cell/2; const e=entries[k]; cells.push({k,x,y,e}); }
+  const W=(weeks+1)*cell, H=7*cell;
+  $('#cal-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" id="cal-svg">${cells.map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${c.e?r:4}" fill="${c.e?col[c.e.sky]:'var(--chart-grid)'}" data-k="${c.k}"/>`).join('')}<circle id="cal-hl" r="12" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity="0"/></svg>`;
+  const svg=$('#cal-svg');
+  const pick=ev=>{ const pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY; const p=pt.matrixTransform(svg.getScreenCTM().inverse()); let best=null,bd=1e9; for(const c of cells){ const d=Math.hypot(c.x-p.x,c.y-p.y); if(d<bd){bd=d;best=c;} } if(!best) return; const hl=$('#cal-hl'); hl.setAttribute('cx',best.x); hl.setAttribute('cy',best.y); hl.setAttribute('opacity',1); $('#cal-readout').textContent = fmtD(best.k)+': '+(best.e ? ({clear:'clear',some:'some cloud',cloudy:'cloudy'}[best.e.sky])+(best.e.seen.length?', saw '+best.e.seen.slice(0,3).join(', '):'')+(best.e.note?'. '+best.e.note.slice(0,80):'') : 'not logged'); };
+  svg.addEventListener('pointermove',pick); svg.addEventListener('pointerdown',pick);
+  const keys=Object.keys(entries); const clear=keys.filter(k=>entries[k].sky==='clear').length, some=keys.filter(k=>entries[k].sky==='some').length;
+  $('#clear-share').textContent = keys.length ? `${clear} of ${keys.length} logged nights were clear, ${some} had some cloud, ${keys.length-clear-some} were cloudy. ${clear/keys.length>=0.5?'Good skies where you are.':'The clear ones are worth the wait.'}` : 'Log a few nights and this fills in.';
+  const counts={}; keys.forEach(k=>(entries[k].seen||[]).forEach(s=>counts[s]=(counts[s]||0)+1));
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,12); const mx=top.length?top[0][1]:1;
+  $('#collection').innerHTML = top.length ? top.map(([n,c])=>`<div><span class="lbl">${esc(n)}</span><span class="bar" style="width:${Math.max(6,c/mx*55)}%"></span><span class="n">${c}</span></div>`).join('') : '<p class="muted">Tick what you saw each night and your collection grows here.</p>';
+}
+$('#btn-log').addEventListener('click',()=>{ editKey=nightKey(new Date()); showTab('diary'); });
+
+/* ---------- sparkline ---------- */
+let spDay = todayKey();
+function renderSpark(){
+  const tk=todayKey();
+  $('#sp-date').textContent = fmtD(spDay);
+  const diff=Math.round((new Date(tk)-new Date(spDay))/86400000);
+  $('#sp-rel').textContent = diff===0?'Today':diff===1?'Yesterday':diff+' days ago';
+  $('#sp-next').style.visibility = diff===0?'hidden':'visible';
+  const d=days[spDay]||{};
+  $('#sp-inputs').innerHTML = metrics.map(m=>`<div class="metric"><div class="row between"><strong>${esc(m.name)}</strong>${m.unit?`<span class="muted small">${esc(m.unit)}</span>`:''}</div>${m.kind==='scale'?`<div class="scale" data-id="${m.id}">${[1,2,3,4,5].map(n=>`<button class="${d[m.id]===n?'on':''}" data-v="${n}">${n}</button>`).join('')}</div>`:`<div class="row" style="margin-top:6px"><input type="number" inputmode="decimal" step="any" data-id="${m.id}" value="${d[m.id]??''}" placeholder="0">${d[m.id]!=null?`<button class="linkbtn" data-clear="${m.id}">clear</button>`:''}</div>`}</div>`).join('');
+  document.querySelectorAll('.scale button').forEach(b=>b.addEventListener('click',()=>{ const id=b.parentElement.dataset.id; const v=Number(b.dataset.v); setVal(id, (days[spDay]||{})[id]===v ? null : v); }));
+  document.querySelectorAll('#sp-inputs input').forEach(i=>i.addEventListener('change',()=>setVal(i.dataset.id, i.value===''?null:Number(i.value))));
+  document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',()=>setVal(b.dataset.clear,null)));
+  renderSparkCharts();
+  renderPair();
+}
+function setVal(id,v){ const d=days[spDay]||{}; if(v==null) delete d[id]; else d[id]=v; if(Object.keys(d).length) days[spDay]=d; else delete days[spDay]; save('days',days); renderSpark(); }
+$('#sp-prev').addEventListener('click',()=>{ spDay=addDays(spDay,-1); renderSpark(); });
+$('#sp-next').addEventListener('click',()=>{ spDay=addDays(spDay,1); renderSpark(); });
+function series(id, n){ const tk=todayKey(); const out=[]; for(let i=n-1;i>=0;i--){ const k=addDays(tk,-i); const v=(days[k]||{})[id]; out.push({k, v: v==null?null:v}); } return out; }
+const mean = a => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
+function renderSparkCharts(){
+  const box=$('#sp-charts'); box.innerHTML='';
+  for(const m of metrics){
+    const s=series(m.id,30); const vals=s.filter(p=>p.v!=null);
+    const wrap=document.createElement('div'); wrap.className='metric';
+    if(vals.length<2){ wrap.innerHTML=`<strong>${esc(m.name)}</strong><p class="muted small">Two or more days and a line appears.</p>`; box.appendChild(wrap); continue; }
+    const W=320,H=70,pad=6; const lo=m.kind==='scale'?1:Math.min(...vals.map(p=>p.v)), hi=m.kind==='scale'?5:Math.max(...vals.map(p=>p.v));
+    const X=i=>pad+i*(W-2*pad)/29, Y=v=>hi===lo?H/2:H-pad-(v-lo)*(H-2*pad)/(hi-lo);
+    const pts=s.map((p,i)=>p.v==null?null:[X(i),Y(p.v)]);
+    let path='', started=false; pts.forEach(p=>{ if(!p){started=false;return;} path+=(started?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)+' '; started=true; });
+    const recent=mean(s.slice(16).filter(p=>p.v!=null).map(p=>p.v)), earlier=mean(s.slice(0,16).filter(p=>p.v!=null).map(p=>p.v));
+    const fmt=v=>m.kind==='scale'?v.toFixed(1)+' of 5':(Math.round(v*10)/10)+(m.unit?' '+m.unit:'');
+    let sentence = recent!=null ? `Averaged ${fmt(recent)} over the last two weeks` : 'Nothing in the last two weeks yet';
+    if(recent!=null && earlier!=null){ const d=recent-earlier; sentence += Math.abs(d)<(hi-lo)*0.05 ? ', about the same as before.' : d>0 ? `, up from ${fmt(earlier)}.` : `, down from ${fmt(earlier)}.`; } else sentence+='.';
+    wrap.innerHTML=`<div class="row between"><strong>${esc(m.name)}</strong><span class="muted small">${vals.length} day${vals.length===1?'':'s'}</span></div><div class="chart"><svg viewBox="0 0 ${W} ${H}"><line x1="${pad}" x2="${W-pad}" y1="${H-pad}" y2="${H-pad}" stroke="var(--chart-grid)"/><path d="${path}" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(p=>p?`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--rose)"/>`:'').join('')}<circle class="hl" r="6" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity="0"/></svg></div><div class="readout">${sentence}</div>`;
+    const svg=wrap.querySelector('svg'), ro=wrap.querySelector('.readout');
+    const pick=ev=>{ const pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY; const p=pt.matrixTransform(svg.getScreenCTM().inverse()); let bi=-1,bd=1e9; pts.forEach((q,i)=>{ if(q&&Math.abs(q[0]-p.x)<bd){bd=Math.abs(q[0]-p.x);bi=i;} }); if(bi<0) return; const hl=svg.querySelector('.hl'); hl.setAttribute('cx',pts[bi][0]); hl.setAttribute('cy',pts[bi][1]); hl.setAttribute('opacity',1); ro.textContent=fmtD(s[bi].k)+': '+fmt(s[bi].v); };
+    svg.addEventListener('pointermove',pick); svg.addEventListener('pointerdown',pick);
+    svg.addEventListener('pointerleave',()=>{ svg.querySelector('.hl').setAttribute('opacity',0); ro.textContent=sentence; });
+    box.appendChild(wrap);
+  }
+}
+function renderPair(){
+  const a=$('#pair-a'), b=$('#pair-b');
+  const opts=metrics.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
+  const pa=a.value||metrics[0]?.id, pb=b.value||metrics[1]?.id||metrics[0]?.id;
+  a.innerHTML=opts; b.innerHTML=opts; a.value=pa; b.value=pb;
+  const ma=metrics.find(m=>m.id===a.value), mb=metrics.find(m=>m.id===b.value);
+  if(!ma||!mb) return;
+  const pts=Object.keys(days).filter(k=>days[k][ma.id]!=null&&days[k][mb.id]!=null).map(k=>({k,x:days[k][ma.id],y:days[k][mb.id]}));
+  const n=pts.length;
+  if(n<7){ $('#pair-chart').innerHTML=''; $('#pair-readout').textContent=''; $('#pair-text').textContent=`Log a week or so with both ${ma.name} and ${mb.name} and this will start to say something. ${n} day${n===1?'':'s'} so far.`; return; }
+  const mx=mean(pts.map(p=>p.x)), my=mean(pts.map(p=>p.y));
+  const sxy=pts.reduce((s,p)=>s+(p.x-mx)*(p.y-my),0), sxx=pts.reduce((s,p)=>s+(p.x-mx)**2,0), syy=pts.reduce((s,p)=>s+(p.y-my)**2,0);
+  const r=(sxx&&syy)?sxy/Math.sqrt(sxx*syy):0;
+  const W=320,H=200,pad=18; const xlo=Math.min(...pts.map(p=>p.x)), xhi=Math.max(...pts.map(p=>p.x)), ylo=Math.min(...pts.map(p=>p.y)), yhi=Math.max(...pts.map(p=>p.y));
+  const X=v=>xhi===xlo?W/2:pad+(v-xlo)*(W-2*pad)/(xhi-xlo), Y=v=>yhi===ylo?H/2:H-pad-(v-ylo)*(H-2*pad)/(yhi-ylo);
+  $('#pair-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" id="pair-svg"><line x1="${pad}" x2="${W-pad}" y1="${H-pad}" y2="${H-pad}" stroke="var(--chart-grid)"/><line x1="${pad}" x2="${pad}" y1="${pad}" y2="${H-pad}" stroke="var(--chart-grid)"/><text x="${W-pad}" y="${H-4}" font-size="11" text-anchor="end" fill="var(--muted)">${esc(ma.name)} ${ma.unit?'('+esc(ma.unit)+')':''}</text><text x="${pad+4}" y="${pad-6}" font-size="11" fill="var(--muted)">${esc(mb.name)}</text>${pts.map(p=>`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="5" fill="var(--lavdeep)" opacity=".8"/>`).join('')}<circle class="hl" r="8" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity="0"/></svg>`;
+  const svg=$('#pair-svg');
+  const pick=ev=>{ const pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY; const p=pt.matrixTransform(svg.getScreenCTM().inverse()); let best=null,bd=1e9; pts.forEach(q=>{ const d=Math.hypot(X(q.x)-p.x,Y(q.y)-p.y); if(d<bd){bd=d;best=q;} }); if(!best) return; const hl=svg.querySelector('.hl'); hl.setAttribute('cx',X(best.x)); hl.setAttribute('cy',Y(best.y)); hl.setAttribute('opacity',1); $('#pair-readout').textContent=`${fmtD(best.k)}: ${ma.name} ${best.x}${ma.unit?' '+ma.unit:''}, ${mb.name} ${best.y}${mb.unit?' '+mb.unit:''}`; };
+  svg.addEventListener('pointermove',pick); svg.addEventListener('pointerdown',pick);
+  $('#pair-readout').textContent='Hover or tap a dot for the day.';
+  const ar=Math.abs(r);
+  const strength = ar<0.2 ? `${ma.name} and ${mb.name} do not move together much` : ar<0.5 ? `there is a gentle link between ${ma.name} and ${mb.name}` : `there is a clear link between ${ma.name} and ${mb.name}`;
+  const more=m=>m.kind==='scale'?'higher':'more', less=m=>m.kind==='scale'?'lower':'less'; const dir = ar<0.2 ? '' : r>0 ? ` Days with ${more(ma)} ${ma.name} tend to have ${more(mb)} ${mb.name}.` : ` Days with ${more(ma)} ${ma.name} tend to have ${less(mb)} ${mb.name}.`;
+  $('#pair-text').textContent=`Across ${n} days, ${strength} (correlation ${r.toFixed(2)}).${dir} One person's month is a hint, not a finding.`;
+}
+$('#pair-a').addEventListener('change',renderPair); $('#pair-b').addEventListener('change',renderPair);
+
+/* metrics sheet */
+$('#btn-metrics').addEventListener('click',()=>{ renderMetricList(); $('#sheet-metrics').classList.add('open'); });
+function renderMetricList(){
+  $('#metric-list').innerHTML=metrics.map(m=>`<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--line)"><div><strong>${esc(m.name)}</strong> <span class="muted small">${m.kind==='scale'?'1 to 5':esc(m.unit||'number')}</span></div><button class="linkbtn danger" data-rm="${m.id}">Remove</button></div>`).join('');
+  document.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{ if(!confirm('Remove this metric? Logged values stay in your backup but will not show.')) return; metrics=metrics.filter(m=>m.id!==b.dataset.rm); save('metrics',metrics); renderMetricList(); renderSpark(); }));
+}
+$('#btn-add-metric').addEventListener('click',()=>{ const name=$('#m-name').value.trim(); if(!name) return toast('Give it a name.'); const id=name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+Date.now().toString(36); metrics.push({id,name,kind:$('#m-kind').value,unit:$('#m-unit').value.trim()}); save('metrics',metrics); $('#m-name').value=''; $('#m-unit').value=''; renderMetricList(); renderSpark(); toast('Added.'); });
+
+/* ---------- settings ---------- */
+$('#btn-settings').addEventListener('click',()=>{ $('#lat').value=loc.lat; $('#lon').value=loc.lon; $('#place').value=loc.name; $('#presets').innerHTML=PRESETS.map((p,i)=>`<button data-p="${i}">${p[0]}</button>`).join(''); document.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{ const p=PRESETS[b.dataset.p]; $('#place').value=p[0]; $('#lat').value=p[1]; $('#lon').value=p[2]; })); $('#sheet-settings').classList.add('open'); });
+$('#btn-geo').addEventListener('click',()=>{ if(!navigator.geolocation) return toast('No location on this device.'); navigator.geolocation.getCurrentPosition(p=>{ $('#lat').value=p.coords.latitude.toFixed(2); $('#lon').value=p.coords.longitude.toFixed(2); $('#place').value='Where I am'; toast('Got it. Save to use it.'); }, ()=>toast('Could not get a location.')); });
+$('#btn-save-loc').addEventListener('click',()=>{ const lat=Number($('#lat').value), lon=Number($('#lon').value); if(isNaN(lat)||isNaN(lon)||Math.abs(lat)>89||Math.abs(lon)>180) return toast('Those coordinates look off.'); loc={name:$('#place').value.trim()||'My spot', lat, lon}; save('loc',loc); $('#sheet-settings').classList.remove('open'); renderTonight(); });
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('.sheet').classList.remove('open')));
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{ if(e.target===s) s.classList.remove('open'); }));
+
+/* ---------- backup ---------- */
+$('#btn-export').addEventListener('click',async()=>{
+  const data={app:'Stardust Diary', exported:new Date().toISOString(), loc, entries, metrics, days, customSeen, photos:await idb.all()};
+  const blob=new Blob([JSON.stringify(data)],{type:'application/json'}); const file=new File([blob],'stardust-diary-'+todayKey()+'.json',{type:'application/json'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'Stardust Diary backup'}); return; }catch(e){} }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=file.name; a.click();
+});
+$('#import-in').addEventListener('change',async ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  try{ const d=JSON.parse(await f.text()); if(d.app!=='Stardust Diary') throw new Error('not ours'); if(!confirm('Replace what is on this phone with the backup?')) return;
+    loc=d.loc||loc; entries=d.entries||{}; metrics=d.metrics||metrics; days=d.days||{}; customSeen=d.customSeen||[]; save('loc',loc); save('entries',entries); save('metrics',metrics); save('days',days); save('customSeen',customSeen);
+    for(const k of Object.keys(d.photos||{})) await idb.put(k,d.photos[k]);
+    toast('Restored.'); renderTonight(); renderDiary(); renderSpark();
+  }catch(e){ toast('That file is not a Stardust Diary backup.'); }
+  ev.target.value='';
+});
+
+/* ---------- go ---------- */
+renderTonight();
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && nightKey(new Date())!==nightKey(new Date(Date.now()-60000))) renderTonight(); });
+</script>
+</body>
+</html>
