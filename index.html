@@ -115,7 +115,7 @@
 
   .list { border-top: 1px solid var(--line); }
   .item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
-  .item .ico { display: none; width: 36px; height: 36px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--blush); }
+  .item .ico { display: none; }
   .item .ico svg { width: 20px; height: 20px; }
   .item strong { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 600; line-height: 1.2; }
   .item .small { margin-top: 2px; }
@@ -629,10 +629,12 @@ async function loadTelescope(force){
   if(cached && !force){ render(cached.img, cached.title, sub); return; }
   render(null, `Finding a ${label} view of what's above you`, 'Needs a connection.');
   try{
-    let items = await nasaSearch(q);
     const must = which==='Roman' ? /roman/i : new RegExp(which,'i');
+    const short = target ? target.target.replace(/ (galaxy|nebula|cluster|supernova remnant)$/i,'') : '';
+    let items = which==='Roman' ? await nasaSearch(q) : await nasaSearch(which, short);
     items = items.filter(i=>must.test(i.title+' '+i.desc));
-    if(!items.length && which!=='Roman') items = (await nasaSearch(`${which} space telescope nebula`)).filter(i=>must.test(i.title+' '+i.desc));
+    if(!items.length && which!=='Roman') items = (await nasaSearch(q)).filter(i=>must.test(i.title));
+    if(!items.length && which!=='Roman') items = (await nasaSearch(`${which} space telescope nebula`)).filter(i=>must.test(i.title));
     if(!items.length) throw new Error('none');
     const pick = items[doy % items.length];
     save(key,{img:pick.img, title:pick.title});
@@ -641,10 +643,11 @@ async function loadTelescope(force){
     render(null, `No ${label} image right now`, 'Check the connection and come back. The sky above still counts.');
   }
 }
-async function nasaSearch(q){
-  const r=await fetch('https://images-api.nasa.gov/search?media_type=image&q='+encodeURIComponent(q));
+const NOT_SKY=/event|briefing|attendee|audience|ceremony|administrator|headquarters|press|senator|crowd|watch party|celebrat|conference|speaks|portrait|team|staff|engineer|clean room|launch|rocket|ariane|testing|mirror segment|model|exhibit|visitor|students|classroom|screen|auditorium|unveil/i;
+async function nasaSearch(q, title){
+  const r=await fetch('https://images-api.nasa.gov/search?media_type=image&q='+encodeURIComponent(q)+(title?'&title='+encodeURIComponent(title):''));
   const j=await r.json();
-  return (j.collection.items||[]).slice(0,40).map(i=>({ title:(i.data[0]||{}).title||'', desc:(i.data[0]||{}).description||'', img:(i.links&&i.links[0]&&i.links[0].href)||'' })).filter(i=>i.img);
+  return (j.collection.items||[]).slice(0,40).map(i=>({ title:(i.data[0]||{}).title||'', desc:(i.data[0]||{}).description||'', img:(i.links&&i.links[0]&&i.links[0].href)||'' })).filter(i=>i.img && !NOT_SKY.test(i.title+' '+i.desc.slice(0,300)));
 }
 
 /* ISS passes */
