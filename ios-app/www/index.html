@@ -626,19 +626,20 @@ async function loadTelescope(force){
   else { q=`${which} nebula`; sub=`A favourite from ${which}.`; }
   const key='img2.'+ns.toLocaleDateString('en-CA')+'.'+which+'.'+(target?target.name:'');
   const cached=load(key,null);
-  if(cached && !force){ render(cached.img, cached.title, sub); return; }
+  const generic = target ? `${target.name} is high overhead tonight. NASA's library has no ${which} image of ${target.target} yet, so here is another ${which} favourite.` : sub;
+  if(cached && !force){ render(cached.img, cached.title, cached.generic?generic:sub); return; }
   render(null, `Finding a ${label} view of what's above you`, 'Needs a connection.');
   try{
     const must = which==='Roman' ? /roman/i : new RegExp(which,'i');
     const short = target ? target.target.replace(/ (galaxy|nebula|cluster|supernova remnant)$/i,'') : '';
     let items = which==='Roman' ? await nasaSearch(q) : await nasaSearch(which, short);
     items = items.filter(i=>must.test(i.title+' '+i.desc));
-    if(!items.length && which!=='Roman') items = (await nasaSearch(q)).filter(i=>must.test(i.title));
-    if(!items.length && which!=='Roman') items = (await nasaSearch(`${which} space telescope nebula`)).filter(i=>must.test(i.title));
+    let isGeneric=false;
+    if(!items.length && which!=='Roman'){ isGeneric=true; items = (await nasaSearch(`${which} space telescope nebula`)).filter(i=>must.test(i.title)); }
     if(!items.length) throw new Error('none');
     const pick = items[doy % items.length];
-    save(key,{img:pick.img, title:pick.title});
-    render(pick.img, pick.title, sub);
+    save(key,{img:pick.img, title:pick.title, generic:isGeneric});
+    render(pick.img, pick.title, isGeneric?generic:sub);
   } catch(e){
     render(null, `No ${label} image right now`, 'Check the connection and come back. The sky above still counts.');
   }
